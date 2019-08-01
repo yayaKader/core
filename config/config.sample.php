@@ -251,8 +251,8 @@ $CONFIG = array(
 
 /**
  * The directory where the skeleton files are located. These files will be
- * copied to the data directory of new users. Leave empty to not copy any
- * skeleton files.
+ * copied to the data directory of new users. Leave this directory empty if you do not want to copy any skeleton files.
+ * A valid path must be given for this key otherwise errors will be generated in owncloud.log when left empty.
  */
 'skeletondirectory' => '/path/to/owncloud/core/skeleton',
 
