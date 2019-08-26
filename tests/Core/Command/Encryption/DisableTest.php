@@ -52,27 +52,33 @@ class DisableTest extends TestCase {
 	 * @param string $expectedString
 	 */
 	public function testDisable($oldStatus, $isUpdating, $masterKeyEnabled, $expectedString) {
-		$this->config->expects($this->exactly(2))
+		$this->config->expects($this->exactly(1))
 			->method('getAppValue')
 			->willReturnMap([
 					['core', 'encryption_enabled', 'no', $oldStatus],
-					['encryption', 'useMasterKey', '', $masterKeyEnabled],
 				]
 			);
 
-		$this->consoleOutput->expects($this->once())
+		$this->consoleOutput->expects($this->exactly(2))
 			->method('writeln')
-			->with($this->stringContains($expectedString));
+			->will($this->onConsecutiveCalls([
+				$this->stringContains('<info>Cleaned up config</info>'),
+				$this->stringContains($expectedString),
+			]));
 
 		if ($isUpdating) {
-			$this->config->expects($this->exactly(2))
+			$this->config
 				->method('setAppValue')
 				->willReturnMap([
 						['core', 'encryption_enabled', 'no', true],
-						['encryption', 'useMasterKey', '', true],
-						['encryption', 'userSpecificKey', '', true],
 					]
 				);
+			$this->config
+				->method('deleteAppValue')
+				->willReturnMap([
+					['encryption', 'useMasterKey', true],
+					['encryption', 'userSpecificKey', true],
+				]);
 		}
 
 		self::invokePrivate($this->command, 'execute', [$this->consoleInput, $this->consoleOutput]);
