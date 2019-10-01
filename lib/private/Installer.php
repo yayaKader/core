@@ -39,9 +39,6 @@
 namespace OC;
 
 use Doctrine\DBAL\Exception\TableExistsException;
-use OC\App\CodeChecker\CodeChecker;
-use OC\App\CodeChecker\EmptyCheck;
-use OC\App\CodeChecker\PrivateCheck;
 use OC\DB\MigrationService;
 use OC_App;
 use OC_DB;
@@ -496,7 +493,7 @@ class Installer {
 				} else {
 					Installer::installShippedApp($appToInstall);
 				}
-				\OC::$server->getConfig()->setAppValue($appToInstall, 'enabled', 'yes');
+				\OC::$server->getConfig()->setAppValue($appToInstall, 'enabled', self::canEnableTheme($appToInstall));
 			}
 		}
 
@@ -564,5 +561,37 @@ class Installer {
 		if (\file_exists($script)) {
 			include $script;
 		}
+	}
+
+	/**
+	 *
+	 * @param string $appId
+	 * @return string return 'yes' if no other enabled theme otherwise 'no'
+	 */
+	private static function canEnableTheme($appId) {
+		$info = \OC::$server->getAppManager()->getAppInfo($appId);
+		if (
+			isset($info['types'])
+			&& \is_array($info['types'])
+			&& \in_array('theme', $info['types'])
+		) {
+			$apps = self::getShippedApps();
+			foreach ($apps as $installedAppId) {
+				if ($installedAppId === $appId) {
+					continue;
+				}
+				$info = \OC::$server->getAppManager()->getAppInfo($installedAppId);
+				$enabled = \OC::$server->getConfig()->getAppValue($installedAppId, 'enabled');
+				if (
+					isset($info['types'])
+					&& \is_array($info['types'])
+					&& \in_array('theme', $info['types'])
+					&& $enabled === 'yes'
+				) {
+					return 'no';
+				}
+			}
+		}
+		return 'yes';
 	}
 }
