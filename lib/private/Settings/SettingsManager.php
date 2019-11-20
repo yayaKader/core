@@ -55,6 +55,7 @@ use OC\Settings\Panels\Admin\FileSharing;
 use OC\Settings\Panels\Admin\Legal;
 use OC\Settings\Panels\Admin\Mail;
 use OC\Settings\Panels\Admin\Logging;
+use OC\Settings\Panels\Admin\PersistentLocking;
 use OC\Settings\Panels\Admin\SecurityWarning;
 use OC\Settings\Panels\Admin\Tips;
 use OC\Settings\Panels\Admin\Status;
@@ -236,6 +237,7 @@ class SettingsManager implements ISettingsManager {
 				FileSharing::class,
 				Encryption::class,
 				Certificates::class,
+				PersistentLocking::class,
 				Apps::class,
 				Legal::class,
 				Status::class
@@ -287,6 +289,7 @@ class SettingsManager implements ISettingsManager {
 			FileSharing::class => new FileSharing($this->config, $this->helper, $this->l),
 			Logging::class => new Logging($this->config, $this->urlGenerator, $this->helper),
 			Mail::class => new Mail($this->config, $this->helper),
+			PersistentLocking::class => new PersistentLocking($this->config),
 			SecurityWarning::class => new SecurityWarning(
 				$this->l,
 				$this->config,
