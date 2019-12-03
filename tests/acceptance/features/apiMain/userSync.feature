@@ -1,4 +1,4 @@
-@api @TestAlsoOnExternalUserBackend
+@api
 Feature: Users sync
 
   Background:
@@ -8,6 +8,18 @@ Feature: Users sync
     | user1    |
 
   Scenario Outline: Trying to sync a user when there is no external user backend
+    Given using OCS API version "<ocs-api-version>"
+    When the administrator tries to sync user "user0" using the OCS API
+    Then the HTTP status code should be "200"
+    And the OCS status code should be "<ocs-status-code>"
+    And the OCS status message should be ""
+    Examples:
+    | ocs-api-version | ocs-status-code |
+    | 1               | 100             |
+    | 2               | 200             |
+
+  @TestAlsoOnExternalUserBackend
+  Scenario Outline: Trying to sync a user that has not changed
     Given using OCS API version "<ocs-api-version>"
     When the administrator tries to sync user "user0" using the OCS API
     Then the HTTP status code should be "200"
