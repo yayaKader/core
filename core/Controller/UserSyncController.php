@@ -75,6 +75,7 @@ class UserSyncController extends OCSController {
 		parent::__construct($appName, $request);
 		$this->syncService = $syncService;
 		$this->userManager = $userManager;
+		$this->logger = $logger;
 	}
 
 	/**
