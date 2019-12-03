@@ -166,7 +166,8 @@ class Application extends App {
 				$c->query('AppName'),
 				$c->query('Request'),
 				$syncService,
-				$c->query('UserManager')
+				$c->query('UserManager'),
+				$c->query(ILogger::class)
 			);
 		});
 		$container->registerService('CronController', static function (SimpleContainer $c) {

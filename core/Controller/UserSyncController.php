@@ -27,6 +27,7 @@ use ArrayIterator;
 use OC\OCS\Result;
 use OC\User\SyncService;
 use OCP\AppFramework\OCSController;
+use OCP\ILogger;
 use OCP\IRequest;
 use OCP\IUserManager;
 
@@ -53,6 +54,10 @@ class UserSyncController extends OCSController {
 	 * @var IUserManager
 	 */
 	private $userManager;
+	/**
+	 * @var ILogger
+	 */
+	private $logger;
 
 	/**
 	 * UserSyncController constructor.
@@ -65,7 +70,8 @@ class UserSyncController extends OCSController {
 	public function __construct($appName,
 								IRequest $request,
 								SyncService $syncService,
-								IUserManager $userManager) {
+								IUserManager $userManager,
+								ILogger $logger) {
 		parent::__construct($appName, $request);
 		$this->syncService = $syncService;
 		$this->userManager = $userManager;
@@ -80,12 +86,17 @@ class UserSyncController extends OCSController {
 	public function syncUser($userId): Result {
 		foreach ($this->userManager->getBackends() as $backEnd) {
 			$users = $backEnd->getUsers($userId, 2);
+			$numUsers = \count($users);
+			$backEndName = \get_class($backEnd);
+			$this->logger->warning("found $backEndName backend with $numUsers matching $userId");
 			if (\count($users) > 1) {
 				$backEndName = \get_class($backEnd);
 				return new Result([], 409, "Multiple users returned from backend($backEndName) for: $userId. Cancelling sync.");
 			}
 
 			if (\count($users) === 1) {
+				$theUser = $users[0];
+				$this->logger->warning("running sync for $backEndName backend and user $theUser");
 				// Run the sync using the internal username if mapped
 				$this->syncService->run($backEnd, new ArrayIterator([$users[0]]));
 				return new Result();
