@@ -21,7 +21,7 @@ Feature: Users sync
   @TestAlsoOnExternalUserBackend
   Scenario Outline: Trying to sync a user that has not changed
     Given using OCS API version "<ocs-api-version>"
-    When the administrator tries to sync user "47e44746-4b61-4201-ae0b-4aed9a34a704" using the OCS API
+    When the administrator tries to sync user "user0" using the OCS API
     Then the HTTP status code should be "200"
     And the OCS status code should be "<ocs-status-code>"
     And the OCS status message should be ""
