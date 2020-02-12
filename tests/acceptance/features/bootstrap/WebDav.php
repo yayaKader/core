@@ -1130,7 +1130,7 @@ trait WebDav {
 	 */
 	public function theSizeOfTheFileShouldBe($size) {
 		$responseXml = HttpRequestHelper::getResponseXml($this->response);
-		$responseXml->registerXPathNamespace('d', 'DAV:');
+		//      $responseXml->registerXPathNamespace('d', 'DAV:');
 		$xmlPart = $responseXml->xpath("//d:prop/d:getcontentlength");
 		Assert::assertEquals($size, (string) $xmlPart[0]);
 	}
