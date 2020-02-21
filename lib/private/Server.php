@@ -916,7 +916,8 @@ class Server extends ServerContainer implements IServerContainer, IServiceLoader
 				$c->query(LicenseFetcher::class),
 				$c->getAppManager(),
 				$c->getConfig(),
-				$c->getTimeFactory()
+				$c->getTimeFactory(),
+				$c->getLogger()
 			);
 		});
 	}
